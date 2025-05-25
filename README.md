@@ -39,4 +39,22 @@ The **WHERE** clause is used in a **SELECT** statement to filter records and spe
 SELECT * FROM students
 WHERE age > 18;
 ```
+
+---
+## 🧩 Explain the purpose of the WHERE clause in a SELECT statement.
+
+The LIMIT and OFFSET clauses are used in SQL queries to control the number of rows returned and to skip a certain number of rows before starting to return rows.
+
+- **LIMIT** specifies the maximum number of rows to return.
+- **OFFSET** specifies the number of rows to skip before starting to return rows.
+Together, they are often used for pagination — showing a subset of results per page.
+
+### Example:
+```
+SELECT * FROM students
+LIMIT 5 OFFSET 10;
+
+```
+---
+
 ---
