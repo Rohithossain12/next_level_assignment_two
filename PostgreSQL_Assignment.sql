@@ -30,6 +30,8 @@ CREATE TABLE sightings (
 
 
 DROP TABLE sightings;
+DROP TABLE rangers;
+DROP TABLE species;
 
 
 SELECT * FROM rangers;
@@ -59,9 +61,121 @@ INSERT INTO species(common_name,scientific_name,discovery_date,conservation_stat
 
 -- sightings
 INSERT INTO sightings (ranger_id, species_id, "location", sighting_time, notes) VALUES
-(1, 1, 'Peak Ridge', '2024-05-10 07:45:00', 'Camera trap image captured'),
-(2, 2, 'Bankwood Area', '2024-05-12 16:20:00', 'Juvenile seen'),
-(3, 3, 'Bamboo Grove East', '2024-05-15 09:10:00', 'Feeding observed'),
-(2, 1, 'Snowfall Pass', '2024-05-18 18:30:00', NULL),
-(4, 5, 'Coastal Cliff', '2024-05-20 06:15:00', 'Rare sighting reported'),
-(5, 4, 'Deep Jungle Camp', '2024-05-22 14:00:00', 'Group of elephants observed');
+(
+  (SELECT ranger_id FROM rangers WHERE ranger_name = 'Alice Green'),
+  (SELECT species_id FROM species WHERE common_name = 'Snow Leopard'),
+  'Peak Ridge',
+  '2024-05-10 07:45:00',
+  'Camera trap image captured'
+),
+(
+  (SELECT ranger_id FROM rangers WHERE ranger_name = 'Bob White'),
+  (SELECT species_id FROM species WHERE common_name = 'Bengal Tiger'),
+  'Bankwood Area',
+  '2024-05-12 16:20:00',
+  'Juvenile seen'
+),
+(
+  (SELECT ranger_id FROM rangers WHERE ranger_name = 'Carol King'),
+  (SELECT species_id FROM species WHERE common_name = 'Red Panda'),
+  'Bamboo Grove East',
+  '2024-05-15 09:10:00',
+  'Feeding observed'
+),
+(
+  (SELECT ranger_id FROM rangers WHERE ranger_name = 'Bob White'),
+  (SELECT species_id FROM species WHERE common_name = 'Snow Leopard'),
+  'Snowfall Pass',
+  '2024-05-18 18:30:00',
+  NULL
+),
+(
+  (SELECT ranger_id FROM rangers WHERE ranger_name = 'Derek Fox'),
+  (SELECT species_id FROM species WHERE common_name = 'Golden Langur'),
+  'Coastal Cliff',
+  '2024-05-20 06:15:00',
+  'Rare sighting reported'
+);
+
+
+-- Problem 1
+INSERT INTO rangers (ranger_name, region)
+VALUES ('Derek Fox', 'Coastal Plains');
+
+
+-- Problem 2
+SELECT COUNT(DISTINCT species_id) AS unique_species_count
+FROM sightings;
+
+
+-- Problem 3
+SELECT *
+FROM sightings
+WHERE location LIKE '%Pass%';
+
+
+-- Problem 4
+SELECT 
+  r.ranger_name AS name,
+  COUNT(s.sighting_id) AS total_sightings
+FROM 
+  rangers r
+JOIN 
+  sightings s ON r.ranger_id = s.ranger_id
+GROUP BY 
+  r.ranger_name
+ORDER BY 
+  total_sightings DESC;
+
+
+
+-- Problem 5
+SELECT 
+  common_name
+FROM 
+  species
+WHERE 
+  species_id NOT IN (SELECT DISTINCT species_id FROM sightings);
+
+
+
+-- Problem 6
+SELECT 
+  sp.common_name,
+  s.sighting_time,
+  r.ranger_name AS name
+FROM 
+  sightings s
+JOIN species sp ON s.species_id = sp.species_id
+JOIN rangers r ON s.ranger_id = r.ranger_id
+ORDER BY 
+  s.sighting_time DESC
+LIMIT 2;
+
+
+
+-- Problem 7
+UPDATE species
+SET conservation_status = 'Historic'
+WHERE discovery_date < '1800-01-01';
+
+
+
+-- problem 8
+SELECT
+  sighting_id,
+  CASE
+    WHEN EXTRACT(HOUR FROM sighting_time) < 12 THEN 'Morning'
+    WHEN EXTRACT(HOUR FROM sighting_time) BETWEEN 12 AND 16 THEN 'Afternoon'
+    ELSE 'Evening'
+  END AS time_of_day
+FROM sightings;
+
+
+
+-- Problem 9 
+DELETE FROM rangers
+WHERE ranger_id NOT IN (
+  SELECT DISTINCT ranger_id FROM sightings
+);
+
