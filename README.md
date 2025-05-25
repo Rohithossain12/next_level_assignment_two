@@ -31,3 +31,12 @@ CREATE TABLE enrollments (
 
 ```
 ---
+## 🧩 Explain the purpose of the WHERE clause in a SELECT statement.
+The **WHERE** clause is used in a **SELECT** statement to filter records and specify which rows to retrieve based on a given condition. It helps to get only the data that meets certain criteria, making queries more precise and efficient.
+
+### Example:
+```
+SELECT * FROM students
+WHERE age > 18;
+```
+---
